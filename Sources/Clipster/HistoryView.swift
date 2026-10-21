@@ -1,10 +1,15 @@
 import AppKit
 import ImageIO
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct HistoryView: View {
     @ObservedObject var model: PanelModel
     @ObservedObject var store: HistoryStore
+    /// Сплошной фон вместо размытия: размытие окна не попадает в скриншоты.
+    var opaqueBackground = false
+    /// На скриншотах без фокуса: иначе текст запроса выглядит выделенным.
+    var autofocus = true
     @FocusState private var searchFocused: Bool
 
     var body: some View {
@@ -71,10 +76,16 @@ struct HistoryView: View {
             footer
         }
         .frame(width: PanelController.size.width, height: PanelController.size.height)
-        .background(VisualEffectBackground())
+        .background {
+            if opaqueBackground {
+                Color(nsColor: .windowBackgroundColor)
+            } else {
+                VisualEffectBackground()
+            }
+        }
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .onAppear { searchFocused = true }
-        .onChange(of: model.focusToken) { searchFocused = true }
+        .onAppear { searchFocused = autofocus }
+        .onChange(of: model.focusToken) { searchFocused = autofocus }
         .onChange(of: items.count) { model.clamp() }
     }
 
@@ -200,7 +211,7 @@ struct ClipRow: View {
                 Image(systemName: "photo").foregroundStyle(.secondary)
             }
         case .files:
-            Image(nsImage: NSWorkspace.shared.icon(forFile: item.filePaths.first ?? "/"))
+            Image(nsImage: fileIcon)
                 .resizable()
                 .scaledToFit()
         case .text:
@@ -208,6 +219,16 @@ struct ClipRow: View {
                 .font(.system(size: 15))
                 .foregroundStyle(.secondary)
         }
+    }
+
+    /// Удалённый или переименованный файл получает иконку по расширению.
+    private var fileIcon: NSImage {
+        let path = item.filePaths.first ?? "/"
+        if FileManager.default.fileExists(atPath: path) {
+            return NSWorkspace.shared.icon(forFile: path)
+        }
+        let type = UTType(filenameExtension: (path as NSString).pathExtension) ?? .data
+        return NSWorkspace.shared.icon(for: type)
     }
 
     private var subtitle: String {

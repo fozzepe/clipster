@@ -6,6 +6,8 @@ A tiny clipboard history manager for macOS. Everything you copy — text, images
 
 Press **⌘E**, type to search, hit **Return**, and it's pasted into the app you were in.
 
+![Clipster](docs/history.png)
+
 - ~1,100 lines of native Swift (AppKit + SwiftUI), no dependencies
 - Builds without Xcode: Command Line Tools are enough
 - Universal binary (Apple Silicon + Intel), macOS 14+
@@ -31,6 +33,11 @@ xcode-select --install   # if you don't have Command Line Tools yet
 
 ## Keys
 
+<p>
+  <img src="docs/search.png" width="49%" alt="Search">
+  <img src="docs/pinned.png" width="49%" alt="Pinned">
+</p>
+
 | Key | Action |
 |---|---|
 | ⌘E | Open / close history (change it in Settings) |
@@ -45,6 +52,8 @@ xcode-select --install   # if you don't have Command Line Tools yet
 | Esc | Close |
 
 ## Defaults
+
+<p align="center"><img src="docs/settings.png" width="55%" alt="Settings"></p>
 
 - Keeps the last 100 items, nothing older than 3 days, nothing larger than 20 MB. Pinned items are kept forever.
 - Passwords copied from password managers (1Password, Bitwarden, Apple Passwords) are **not** recorded. You can turn that on in Settings.

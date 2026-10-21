@@ -4,8 +4,14 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var settings: Settings
-    @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
+    @State private var launchAtLogin: Bool
     @State private var trusted = Paster.isTrusted
+
+    /// `launchAtLogin` задаётся только на скриншотах, иначе берётся реальный статус.
+    init(settings: Settings, launchAtLogin: Bool? = nil) {
+        self.settings = settings
+        _launchAtLogin = State(initialValue: launchAtLogin ?? (SMAppService.mainApp.status == .enabled))
+    }
 
     var body: some View {
         Form {

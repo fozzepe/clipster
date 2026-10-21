@@ -3,7 +3,9 @@ import ApplicationServices
 
 /// Автовставка: имитирует ⌘V в активном приложении. Нужен «Универсальный доступ».
 enum Paster {
-    static var isTrusted: Bool { AXIsProcessTrusted() }
+    /// Для скриншотов: показывать интерфейс так, будто доступ уже выдан.
+    static var assumeTrusted = false
+    static var isTrusted: Bool { assumeTrusted || AXIsProcessTrusted() }
 
     /// Показывает системный запрос и добавляет Clipster в список «Универсального доступа».
     static func requestAccess() {

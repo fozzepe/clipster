@@ -8,13 +8,14 @@ final class HistoryStore: ObservableObject {
     private let fileURL: URL
     let blobsURL: URL
 
-    init(settings: Settings) {
+    /// `directory` задаётся только для демо-данных скриншотов; по умолчанию Application Support.
+    init(settings: Settings, directory: URL? = nil) {
         self.settings = settings
-        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        let base = directory ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("Clipster", isDirectory: true)
         // Приложение раньше называлось Buffer: забираем его историю.
         let legacy = base.deletingLastPathComponent().appendingPathComponent("Buffer", isDirectory: true)
-        if !FileManager.default.fileExists(atPath: base.path),
+        if directory == nil, !FileManager.default.fileExists(atPath: base.path),
            FileManager.default.fileExists(atPath: legacy.appendingPathComponent("history.json").path) {
             try? FileManager.default.moveItem(at: legacy, to: base)
         }
@@ -27,11 +28,11 @@ final class HistoryStore: ObservableObject {
 
     // MARK: - Изменения
 
-    func add(_ draft: ClipDraft) {
+    func add(_ draft: ClipDraft, date: Date = Date(), pinned: Bool = false) {
         if let i = items.firstIndex(where: { $0.hash == draft.hash }) {
             // Уже есть: поднимаем наверх, срок хранения начинается заново.
             var existing = items.remove(at: i)
-            existing.date = Date()
+            existing.date = date
             existing.sourceApp = draft.sourceApp ?? existing.sourceApp
             items.insert(existing, at: 0)
         } else {
@@ -48,7 +49,7 @@ final class HistoryStore: ObservableObject {
             }
             let item = ClipItem(id: id, kind: draft.kind, text: draft.text, reps: reps,
                                 filePaths: draft.filePaths, hash: draft.hash,
-                                sourceApp: draft.sourceApp, date: Date(), pinned: false)
+                                sourceApp: draft.sourceApp, date: date, pinned: pinned)
             items.insert(item, at: 0)
         }
         prune()
