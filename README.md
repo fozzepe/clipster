@@ -1,5 +1,7 @@
 # Clipster
 
+[Русская версия](README.ru.md)
+
 A tiny clipboard history manager for macOS. Everything you copy — text, images, files from Finder — stays one keystroke away.
 
 Press **⌘E**, type to search, hit **Return**, and it's pasted into the app you were in.
@@ -48,10 +50,6 @@ xcode-select --install   # if you don't have Command Line Tools yet
 - Passwords copied from password managers (1Password, Bitwarden, Apple Passwords) are **not** recorded. You can turn that on in Settings.
 - History is stored unencrypted in `~/Library/Application Support/Clipster/`.
 - Launches at login. The global ⌘E shortcut overrides "Use Selection for Find" in other apps.
-
-## По-русски
-
-Менеджер истории буфера обмена для мака. Жмёшь ⌘E, ищешь, жмёшь Enter, и нужное вставляется туда, где ты был. Скачай `Clipster.zip` из Releases и при первом запуске разреши его в «Конфиденциальность и безопасность». Сделано вайбкодингом за вечер.
 
 ## License
 
