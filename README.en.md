@@ -67,6 +67,14 @@ xcode-select --install   # if you don't have Command Line Tools yet
 - History is stored unencrypted in `~/Library/Application Support/Clipster/`.
 - Launches at login. The global ⌘E shortcut overrides "Use Selection for Find" in other apps.
 
+## Privacy
+
+- **Clipster never goes online.** No network requests, no analytics, no telemetry, no accounts, no update checks. Verify it with a network filter like [LuLu](https://objective-see.org/products/lulu.html) or Little Snitch, or search the source: `grep -rn "URLSession" Sources/` finds nothing.
+- **Only the installer uses the network,** to download the zip from GitHub. Like any website, GitHub sees the download. The author doesn't know who installed Clipster.
+- **History stays on your Mac** in `~/Library/Application Support/Clipster/`, unencrypted, so apps running as your user can read it like any of your files. Delete the folder and the history is gone.
+- **Passwords** from password managers are not recorded by default.
+- **No keylogging.** ⌘E uses the standard system hotkey API, so Input Monitoring permission isn't needed. Accessibility is used for one thing only: pressing ⌘V for you after you pick an item.
+
 ## License
 
 [MIT](LICENSE)
