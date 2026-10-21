@@ -1,65 +1,111 @@
 # Clipster
 
-[Русская версия](README.ru.md)
+[English](README.en.md)
 
-A tiny clipboard history manager for macOS. Everything you copy — text, images, files from Finder — stays one keystroke away.
+Маленький менеджер истории буфера обмена для macOS. Всё, что ты копировал (текст, картинки, файлы из Finder), можно достать одним сочетанием клавиш.
 
-Press **⌘E**, type to search, hit **Return**, and it's pasted into the app you were in.
+Жмёшь **⌘E**, вводишь пару слов, жмёшь **Enter**. Нужный фрагмент вставляется в то приложение, где ты был.
 
 ![Clipster](docs/history.png)
 
-- ~1,100 lines of native Swift (AppKit + SwiftUI), no dependencies
-- Builds without Xcode: Command Line Tools are enough
-- Universal binary (Apple Silicon + Intel), macOS 14+
-- Vibe-coded in one evening with [Claude Code](https://claude.com/claude-code)
+- Бесплатно и с открытым кодом
+- Работает на любом маке с macOS 14 (Sonoma) и новее: Apple Silicon и Intel
+- Живёт иконкой в строке меню, не мешает и не шлёт данные в интернет
+- Навайбкожено за вечер с [Claude Code](https://claude.com/claude-code)
 
-> The UI is in Russian for now.
+## Установка за минуту
 
-## Install
+Понадобится Терминал. Звучит страшно, но нужно просто вставить одну строку.
 
-1. Download `Clipster.zip` from [Releases](../../releases/latest), unzip, move `Clipster.app` to Applications.
-2. The app isn't notarized, so macOS will block the first launch. Either go to **System Settings → Privacy & Security → Open Anyway**, or run:
-   ```bash
-   xattr -dr com.apple.quarantine /Applications/Clipster.app
-   ```
-3. Allow Clipster in **Privacy & Security → Accessibility**. Without it Clipster can only copy, not auto-paste.
+**Шаг 1. Открой Терминал.**
+Нажми **⌘ + Пробел**, набери `Терминал` и нажми **Enter**. Откроется окно с текстом.
 
-Or build it yourself:
+**Шаг 2. Вставь команду.**
+Скопируй строку ниже (на GitHub справа от неё есть кнопка копирования), вставь в Терминал через **⌘V** и нажми **Enter**:
 
 ```bash
-xcode-select --install   # if you don't have Command Line Tools yet
+curl -fsSL https://raw.githubusercontent.com/fozzepe/clipster/main/install.sh | zsh
+```
+
+Команда скачает Clipster с GitHub, положит его в «Программы» и запустит. Пароль она не спрашивает. Через несколько секунд появится надпись «Готово», и Терминал можно закрыть. Что именно делает команда, видно в файле [install.sh](install.sh).
+
+**Шаг 3. Разреши автовставку.**
+macOS покажет окно про «Универсальный доступ». Нажми **«Открыть Системные настройки»** и включи переключатель напротив **Clipster**. Mac может попросить пароль или Touch ID, это нормально.
+
+Если окно не появилось: **Системные настройки → Конфиденциальность и безопасность → Универсальный доступ**, включи Clipster.
+
+Без этого разрешения Clipster тоже работает, но только копирует выбранное, а вставлять приходится самому через ⌘V.
+
+**Шаг 4. Пользуйся.**
+Справа вверху, в строке меню, появилась иконка Clipster. Скопируй что-нибудь, нажми **⌘E**, и откроется история.
+
+### Если Терминал не вариант
+
+1. Скачай `Clipster.zip` со страницы [Releases](../../releases/latest).
+2. Открой скачанный архив двойным кликом. Перетащи **Clipster** в папку **«Программы»** (в Finder слева).
+3. Запусти Clipster из «Программ». macOS скажет, что не может проверить разработчика. Закрой это окно.
+4. Открой **Системные настройки → Конфиденциальность и безопасность** и пролистай вниз. Там будет строка про Clipster и кнопка **«Всё равно открыть»**. Нажми её и подтверди паролем или Touch ID.
+5. Дальше так же, как в шагах 3 и 4 выше.
+
+### Почему macOS ругается
+
+Чтобы macOS пускала приложение без вопросов, разработчик должен платить Apple $99 в год за сертификат. Clipster бесплатный и без сертификата. Код открыт: можно проверить, что внутри, или собрать самому.
+
+## Клавиши
+
+<p>
+  <img src="docs/search.png" width="49%" alt="Поиск">
+  <img src="docs/pinned.png" width="49%" alt="Закреплённые">
+</p>
+
+| Клавиша | Действие |
+|---|---|
+| ⌘E | Открыть или закрыть историю (меняется в настройках) |
+| ввод текста | Поиск по словам: порядок и регистр не важны |
+| ↑ ↓ | Выбор |
+| Enter | Вставить в активное приложение |
+| ⌥ Enter | Только скопировать |
+| ⌘1 … ⌘9 | Вставить элемент по номеру |
+| ⌘P | Закрепить или открепить |
+| ⌘⌫ | Удалить элемент |
+| Tab | Переключить «История» и «Закреплённые» |
+| Esc | Закрыть |
+
+Правый клик по элементу открывает то же самое меню.
+
+## Что по умолчанию
+
+- Хранятся последние 100 элементов не старше 3 дней. Всё крупнее 20 МБ не сохраняется. Закреплённые живут вечно.
+- Пароли из менеджеров паролей (1Password, Bitwarden, «Пароли» Apple) **не записываются**. Включить запись можно в настройках.
+- История лежит только на твоём маке, без шифрования, в `~/Library/Application Support/Clipster/`.
+- Clipster запускается при входе в систему и живёт в строке меню, в Dock его нет.
+- Глобальный ⌘E перехватывает «Искать выделенное» в других приложениях. Если мешает, поменяй сочетание в настройках.
+
+## Настройки
+
+<p align="center"><img src="docs/settings.png" width="55%" alt="Настройки"></p>
+
+Иконка в строке меню → «Настройки…»: горячая клавиша, лимиты по количеству, дням и размеру, запись паролей, автозапуск, доступ для автовставки.
+
+## Частые вопросы
+
+**Как обновить?** Запусти ту же команду из шага 2 ещё раз. История и настройки сохранятся.
+
+**После обновления перестала работать автовставка.** macOS привязывает разрешение к конкретной сборке. Открой **Универсальный доступ**, выдели Clipster, удали его кнопкой **«−»** и снова запусти Clipster. Он попросит доступ заново.
+
+**⌘E ничего не открывает.** Проверь, что иконка Clipster есть в строке меню. Если есть, значит, ⌘E занят другой программой: поменяй сочетание в настройках Clipster.
+
+**Как удалить?** Иконка в строке меню → «Выйти из Clipster». Перетащи Clipster из «Программ» в Корзину. В **Системные настройки → Основные → Объекты входа** убери Clipster из списка. Чтобы стереть историю, удали папку `~/Library/Application Support/Clipster`.
+
+## Собрать самому
+
+```bash
+xcode-select --install   # если Command Line Tools ещё не стоят
 ./build.sh --install
 ```
 
-## Keys
+Около 1100 строк на Swift (AppKit + SwiftUI), без сторонних зависимостей, Xcode не нужен. Скриншоты для README рисует само приложение на демо-данных: `.build/debug/Clipster --screenshots docs`.
 
-<p>
-  <img src="docs/search.png" width="49%" alt="Search">
-  <img src="docs/pinned.png" width="49%" alt="Pinned">
-</p>
+## Лицензия
 
-| Key | Action |
-|---|---|
-| ⌘E | Open / close history (change it in Settings) |
-| typing | Search by words, any order, case-insensitive |
-| ↑ ↓ | Move selection |
-| Return | Paste into the active app |
-| ⌥ Return | Copy only |
-| ⌘1 … ⌘9 | Paste item by number |
-| ⌘P | Pin / unpin |
-| ⌘⌫ | Delete item |
-| Tab | History ↔ Pinned |
-| Esc | Close |
-
-## Defaults
-
-<p align="center"><img src="docs/settings.png" width="55%" alt="Settings"></p>
-
-- Keeps the last 100 items, nothing older than 3 days, nothing larger than 20 MB. Pinned items are kept forever.
-- Passwords copied from password managers (1Password, Bitwarden, Apple Passwords) are **not** recorded. You can turn that on in Settings.
-- History is stored unencrypted in `~/Library/Application Support/Clipster/`.
-- Launches at login. The global ⌘E shortcut overrides "Use Selection for Find" in other apps.
-
-## License
-
-[MIT](LICENSE)
+[MIT](LICENSE): бери, меняй, распространяй.
